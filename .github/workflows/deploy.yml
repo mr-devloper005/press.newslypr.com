@@ -59,19 +59,51 @@ jobs:
       - name: Image budget
         run: pnpm images:budget
 
-      - name: Build and push image
-        shell: bash
+      - name: Prepare build environment
         env:
           APP_ENV_PRODUCTION: ${{ secrets.APP_ENV_PRODUCTION }}
-          IMAGE: ${{ steps.image.outputs.image }}
-          IMAGE_LATEST: ${{ steps.image.outputs.latest }}
         run: |
           set -euo pipefail
           printf '%s' "$APP_ENV_PRODUCTION" > .env.build
           node scripts/validate-env.mjs .env.build
-          set -a
-          . ./.env.build
-          set +a
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+
+          const lines = fs.readFileSync('.env.build', 'utf8').split(/\r?\n/)
+          const output = []
+
+          for (const rawLine of lines) {
+            const line = rawLine.trim()
+            if (!line || line.startsWith('#')) continue
+
+            const separator = line.indexOf('=')
+            if (separator < 1) continue
+
+            const key = line.slice(0, separator).trim()
+            if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(key)) continue
+
+            let value = line.slice(separator + 1).trim()
+            if (
+              (value.startsWith('"') && value.endsWith('"')) ||
+              (value.startsWith("'") && value.endsWith("'"))
+            ) {
+              value = value.slice(1, -1)
+            }
+
+            const delimiter = `ENV_${key}_${Date.now()}`
+            output.push(`${key}<<${delimiter}\n${value}\n${delimiter}`)
+          }
+
+          fs.appendFileSync(process.env.GITHUB_ENV, `${output.join('\n')}\n`)
+          NODE
+
+      - name: Build and push image
+        shell: bash
+        env:
+          IMAGE: ${{ steps.image.outputs.image }}
+          IMAGE_LATEST: ${{ steps.image.outputs.latest }}
+        run: |
+          set -euo pipefail
 
           built_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
