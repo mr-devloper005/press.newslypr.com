@@ -3,12 +3,12 @@ import type { TaskKey } from "@/lib/site-config";
 export const slot4TaskSupport = {
   article: false,
   mediaDistribution: true,
-  classified: true,
-  sbm: true,
-  profile: true,
-  pdf: true,
-  listing: true,
-  image: true,
+  classified: false,
+  sbm: false,
+  profile: false,
+  pdf: false,
+  listing: false,
+  image: false,
 } satisfies Record<TaskKey, boolean>;
 
 export const slot4TaskNotes = {
