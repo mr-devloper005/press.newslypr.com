@@ -182,112 +182,139 @@ function EditorialArchive({
   label: string
 }) {
   const page = pagination.page || 1
-  const lead = posts[0]
-  const secondary = posts.slice(1, 3)
-  const remaining = posts.slice(3)
+  const archiveTitle = category === 'all' ? label : `Category: ${categoryLabel}`
 
   return (
     <EditableSiteShell>
-      <main className="min-h-screen bg-[#f7f4ef] text-[#111]">
-        <section className="border-b border-black bg-white">
-          <div className="mx-auto flex max-w-[var(--editable-container)] flex-col gap-6 px-4 py-10 sm:px-6 lg:flex-row lg:items-end lg:justify-between lg:px-8 lg:py-14">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.28em] text-[#c92f2f]">The newsroom</p>
-              <h1 className="editorial-brand mt-3 text-6xl font-black leading-none tracking-[-0.055em] sm:text-7xl lg:text-8xl">
-                {category === 'all' ? label : categoryLabel}
-              </h1>
+      <main id="top" className="min-h-screen bg-[#f1f3f8] text-[#222a33]">
+        <section className="bg-[#303030] text-white">
+          <div className="funds-container flex min-h-[244px] flex-col items-center justify-center px-4 py-14 text-center">
+            <h1 className="max-w-5xl text-3xl font-extrabold uppercase leading-tight tracking-[-0.02em] sm:text-4xl">
+              {archiveTitle}
+            </h1>
+            <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm font-bold">
+              <Link href="/">Home</Link>
+              <span>/</span>
+              <span>{category === 'all' ? label : categoryLabel}</span>
             </div>
-            <p className="max-w-md border-l-4 border-[#c92f2f] pl-5 text-sm font-bold leading-7 text-black/65">
-              Timely reporting, sharp perspectives, and media-ready stories organized for fast discovery.
-            </p>
           </div>
         </section>
 
-        <section className="border-b border-black bg-[#171717] text-white">
-          <div className="mx-auto flex max-w-[var(--editable-container)] gap-7 overflow-x-auto px-4 py-4 text-xs font-black uppercase tracking-[0.16em] sm:px-6 lg:px-8">
-            <Link href={basePath} className={category === 'all' ? 'text-[#f34a43]' : 'hover:text-[#f34a43]'}>Latest</Link>
-            {categories.slice(0, 8).map((item) => (
-              <Link key={item.slug} href={pageHref(basePath, item.slug, 1)} className={category === item.slug ? 'text-[#f34a43]' : 'whitespace-nowrap hover:text-[#f34a43]'}>
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {lead ? (
-          <section className="mx-auto grid max-w-[var(--editable-container)] border-x border-black bg-white lg:grid-cols-[1.75fr_0.75fr]">
-            <Link href={`${basePath}/${lead.slug}`} className="group relative min-h-[34rem] overflow-hidden border-b border-black lg:border-b-0 lg:border-r">
-              <img src={getImage(lead)} alt="" className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.025]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-white sm:p-9">
-                <span className="bg-[#c92f2f] px-3 py-2 text-[10px] font-black uppercase tracking-[0.2em]">{getCategory(lead, label)}</span>
-                <h2 className="editorial-serif mt-5 max-w-4xl text-4xl font-black leading-[0.98] tracking-[-0.045em] sm:text-6xl">{lead.title}</h2>
-                <p className="mt-5 max-w-2xl line-clamp-2 text-sm font-semibold leading-7 text-white/80">{getSummary(lead)}</p>
-              </div>
-            </Link>
-            <div className="grid">
-              <div className="border-b border-black bg-[#c92f2f] p-6 text-white">
-                <p className="text-xs font-black uppercase tracking-[0.24em]">Top stories</p>
-                <p className="editorial-serif mt-3 text-3xl font-black leading-tight">What the newsroom is watching now.</p>
-              </div>
-              {secondary.map((post, index) => (
-                <Link key={post.id || post.slug} href={`${basePath}/${post.slug}`} className="group grid grid-cols-[7rem_1fr] border-b border-black bg-white last:border-b-0">
-                  <img src={getImage(post)} alt="" className="h-full min-h-40 w-full object-cover grayscale transition group-hover:grayscale-0" />
-                  <div className="p-5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#c92f2f]">0{index + 1}</p>
-                    <h3 className="editorial-serif mt-3 text-xl font-black leading-tight">{post.title}</h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        <section className="mx-auto max-w-[var(--editable-container)] border-x border-black bg-[#f7f4ef] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-5 border-b-4 border-black pb-4">
-            <h2 className="editorial-brand text-4xl font-black tracking-[-0.04em] sm:text-5xl">More from the desk</h2>
-            <form action={basePath} className="flex border border-black bg-white">
-              <select name="category" defaultValue={category} className="h-11 min-w-44 bg-transparent px-3 text-xs font-black uppercase outline-none">
+        <section className="funds-container grid gap-8 py-10 lg:grid-cols-[minmax(0,878px)_360px]">
+          <div className="min-w-0">
+            <form action={basePath} className="funds-card mb-8 flex flex-col gap-3 p-5 sm:flex-row sm:items-center">
+              <select name="category" defaultValue={category} className="h-11 min-w-0 flex-1 border border-[#e1e4ea] bg-white px-3 text-sm outline-none">
                 <option value="all">All categories</option>
                 {categories.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
               </select>
-              <button className="h-11 bg-black px-5 text-xs font-black uppercase tracking-[0.14em] text-white">Filter</button>
+              <button className="h-11 bg-[#2b82df] px-6 text-sm font-bold text-white">Filter</button>
             </form>
+
+            {posts.length ? (
+              <div className="grid gap-8">
+                {posts.map((post, index) => (
+                  <EditorialArchiveCard key={post.id || post.slug} post={post} href={`${basePath}/${post.slug}`} label={label} index={index} />
+                ))}
+              </div>
+            ) : (
+              <div className="funds-card p-12 text-center">
+                <Search className="mx-auto h-8 w-8 text-[#2b82df]" />
+                <h2 className="mt-4 text-3xl font-bold">No posts found</h2>
+                <p className="mt-2 text-sm text-[#555b63]">Try another category or check back after new updates are published.</p>
+              </div>
+            )}
+
+            <div className="mt-8 flex items-center gap-2">
+              {pagination.hasPrevPage ? <Link href={pageHref(basePath, category, page - 1)} className="bg-[#2b82df] px-5 py-3 text-sm font-bold text-white">Prev</Link> : null}
+              <span className="bg-[#ec6530] px-5 py-3 text-sm font-bold text-white">{page}</span>
+              <span className="bg-[#2b82df] px-5 py-3 text-sm font-bold text-white">...</span>
+              <span className="bg-[#2b82df] px-5 py-3 text-sm font-bold text-white">{pagination.totalPages || 1}</span>
+              {pagination.hasNextPage ? <Link href={pageHref(basePath, category, page + 1)} className="bg-[#2b82df] px-5 py-3 text-sm font-bold text-white">&gt;</Link> : null}
+            </div>
           </div>
 
-          {remaining.length ? (
-            <div className="grid border-l border-t border-black md:grid-cols-2 xl:grid-cols-3">
-              {remaining.map((post, index) => (
-                <Link key={post.id || post.slug} href={`${basePath}/${post.slug}`} className="group border-b border-r border-black bg-white">
-                  <div className="aspect-[16/10] overflow-hidden bg-black">
-                    <img src={getImage(post)} alt="" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
-                  </div>
-                  <div className="p-5">
-                    <div className="flex items-center justify-between gap-4 text-[10px] font-black uppercase tracking-[0.18em] text-[#c92f2f]">
-                      <span>{getCategory(post, label)}</span><span>{String(index + 3).padStart(2, '0')}</span>
-                    </div>
-                    <h3 className="editorial-serif mt-4 text-2xl font-black leading-[1.05]">{post.title}</h3>
-                    <p className="mt-4 line-clamp-3 text-sm leading-6 text-black/60">{getSummary(post)}</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : !lead ? (
-            <div className="border border-dashed border-black bg-white p-12 text-center">
-              <Search className="mx-auto h-8 w-8" />
-              <h2 className="editorial-serif mt-4 text-3xl font-black">No stories found</h2>
-              <p className="mt-2 text-sm text-black/60">Try another category or publish a new newsroom story.</p>
-            </div>
-          ) : null}
-
-          <div className="mt-10 flex items-center justify-center gap-0">
-            {pagination.hasPrevPage ? <Link href={pageHref(basePath, category, page - 1)} className="border border-black bg-white px-5 py-3 text-xs font-black uppercase">Previous</Link> : null}
-            <span className="border-y border-black bg-[#c92f2f] px-5 py-3 text-xs font-black uppercase text-white">Page {page} / {pagination.totalPages || 1}</span>
-            {pagination.hasNextPage ? <Link href={pageHref(basePath, category, page + 1)} className="border border-black bg-white px-5 py-3 text-xs font-black uppercase">Next</Link> : null}
-          </div>
+          <EditorialSidebar basePath={basePath} recentPosts={posts.slice(0, 7)} />
         </section>
       </main>
     </EditableSiteShell>
+  )
+}
+
+function EditorialArchiveCard({ post, href, label, index }: { post: SitePost; href: string; label: string; index: number }) {
+  const category = getCategory(post, label)
+  const summary = getSummary(post)
+  const image = getImages(post)[0]
+
+  if (index % 7 === 2 && image) {
+    return (
+      <Link href={href} className="funds-card group grid overflow-hidden transition hover:-translate-y-1 hover:shadow-lg md:grid-cols-[260px_1fr]">
+        <img src={image} alt="" className="h-full min-h-[210px] w-full object-cover transition duration-500 group-hover:scale-105" />
+        <div className="p-7">
+          <span className="inline-block bg-[#2b82df] px-3 py-1 text-sm text-white">{category}</span>
+          <h2 className="mt-5 text-2xl font-extrabold leading-tight">{post.title}</h2>
+          {summary ? <p className="mt-3 line-clamp-3 text-base leading-7 text-[#222a33]">{summary}</p> : null}
+          <ArchiveMetaLine post={post} />
+        </div>
+      </Link>
+    )
+  }
+
+  if (index % 5 === 1) {
+    return (
+      <Link href={href} className="funds-card group block border-l-[6px] border-l-[#8fdddf] p-7 transition hover:border-l-[#2b82df] hover:shadow-lg">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="inline-block bg-[#2b82df] px-3 py-1 text-sm text-white">{category}</span>
+          <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#8b929d]">Brief {String(index + 1).padStart(2, '0')}</span>
+        </div>
+        <h2 className="mt-5 text-2xl font-extrabold leading-tight group-hover:text-[#2b82df]">{post.title}</h2>
+        {summary ? <p className="mt-3 line-clamp-2 text-base leading-7">{summary}</p> : null}
+        <ArchiveMetaLine post={post} />
+      </Link>
+    )
+  }
+
+  return (
+    <Link href={href} className="funds-card group block p-7 transition hover:-translate-y-1 hover:shadow-lg">
+      <span className="inline-block bg-[#2b82df] px-3 py-1 text-sm text-white">{category}</span>
+      <h2 className="mt-5 text-2xl font-extrabold leading-tight group-hover:text-[#2b82df]">{post.title}</h2>
+      {summary ? <p className="mt-3 line-clamp-2 text-base leading-7 text-[#222a33]">{summary}</p> : null}
+      <ArchiveMetaLine post={post} />
+    </Link>
+  )
+}
+
+function ArchiveMetaLine({ post }: { post: SitePost }) {
+  const published = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''
+  const author = getField(post, ['author', 'name', 'contactPerson', 'company'])
+  return (
+    <div className="mt-5 flex flex-wrap gap-5 text-sm text-[#1e2936]">
+      <span>{author || 'Press Desk'}</span>
+      {published ? <time>{published}</time> : null}
+    </div>
+  )
+}
+
+function EditorialSidebar({ basePath, recentPosts }: { basePath: string; recentPosts: SitePost[] }) {
+  return (
+    <aside className="space-y-8 lg:sticky lg:top-6 lg:self-start">
+      <div className="funds-card p-8">
+        <h2 className="text-base font-normal">Search</h2>
+        <form action="/search" className="mt-3 flex border border-[#e0e0e0] bg-white p-1">
+          <input name="q" type="search" className="min-w-0 flex-1 px-3 py-2 outline-none" />
+          <button className="bg-[#2b82df] px-4 text-sm font-bold text-white">Search</button>
+        </form>
+      </div>
+      <div className="funds-card p-8">
+        <h2 className="text-[34px] font-extrabold leading-tight text-[#3a3f45]">Recent Posts</h2>
+        <div className="mt-6 grid gap-2 text-[16px] leading-6 text-[#4d4d4d]">
+          {recentPosts.length ? recentPosts.map((post) => (
+            <Link key={post.id || post.slug} href={`${basePath}/${post.slug}`} className="hover:text-[#2b82df]">
+              {post.title}
+            </Link>
+          )) : <p>No recent posts yet.</p>}
+        </div>
+      </div>
+    </aside>
   )
 }
 
