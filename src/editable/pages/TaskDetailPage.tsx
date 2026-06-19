@@ -133,39 +133,115 @@ function BackLink({ task }: { task: TaskKey }) {
 }
 
 function ArticleDetail({ task, post, related, comments }: { task: TaskKey; post: SitePost; related: SitePost[]; comments: Array<{ id: string; name: string; comment: string; createdAt: string }> }) {
-  const images = getImages(post)
+  const taskConfig = getTaskConfig(task)
+  const basePath = taskConfig?.route || `/${task}`
   const published = post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''
+  const author = getField(post, ['author', 'name', 'contactPerson', 'company'])
   return (
-    <section className="bg-[#f7f4ef]">
-      <header className="border-b border-black/20">
-        <div className="mx-auto max-w-[1180px] px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-          <BackLink task={task} />
-          <div className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t-4 border-black pt-4 text-[11px] font-black uppercase tracking-[0.16em]">
-            <span className="text-[#c92f2f]">{categoryOf(post, 'News')}</span>
-            {published ? <time>{published}</time> : null}
+    <section id="top" className="bg-[#f1f3f8]">
+      <header className="bg-[#303030] text-white">
+        <div className="funds-container flex min-h-[318px] flex-col items-center justify-center px-4 py-16 text-center">
+          <h1 className="max-w-6xl text-3xl font-extrabold uppercase leading-tight tracking-[-0.02em] sm:text-4xl">
+            {post.title}
+          </h1>
+          <div className="mt-3 flex flex-wrap justify-center gap-2 text-sm font-bold">
+            <Link href="/">Home</Link>
+            <span>/</span>
+            {published ? (
+              <>
+                <span>{new Date(post.publishedAt || '').getFullYear()}</span>
+                <span>/</span>
+                <span>{new Date(post.publishedAt || '').toLocaleDateString('en-US', { month: 'long' })}</span>
+                <span>/</span>
+                <span>{new Date(post.publishedAt || '').getDate()}</span>
+                <span>/</span>
+              </>
+            ) : null}
+            <span>{post.title}</span>
           </div>
-          <h1 className="editorial-serif mt-6 max-w-6xl text-5xl font-black leading-[0.94] tracking-[-0.055em] sm:text-6xl lg:text-[5.5rem]">{post.title}</h1>
-          {summaryText(post) ? <p className="mt-6 max-w-4xl text-xl font-bold leading-8 text-black/68 sm:text-2xl">{summaryText(post)}</p> : null}
         </div>
       </header>
 
-      {images[0] ? (
-        <figure className="mx-auto max-w-[1320px] border-x border-b border-black/15 bg-white">
-          <img src={images[0]} alt="" className="max-h-[760px] w-full object-cover" />
-          <figcaption className="border-t border-black/15 px-4 py-3 text-xs italic text-black/55 sm:px-6">Featured image for {post.title}</figcaption>
-        </figure>
-      ) : null}
-
-      <div className="mx-auto grid max-w-[1180px] gap-12 px-4 py-12 sm:px-6 lg:grid-cols-[minmax(0,760px)_300px] lg:px-8 lg:py-16">
-        <article className="min-w-0 border-t-4 border-black pt-8">
+      <div className="funds-container grid gap-8 py-10 lg:grid-cols-[minmax(0,878px)_360px]">
+        <article className="funds-card min-w-0 p-7 sm:p-8">
+          <div className="flex flex-wrap items-center gap-7 text-sm text-[#1e2936]">
+            <span className="bg-[#2b82df] px-3 py-1 text-white">{categoryOf(post, 'News')}</span>
+            <span>{author || 'Press Desk'}</span>
+            {published ? <time>{published}</time> : null}
+          </div>
           <BodyContent post={post} />
+          <AuthorBox post={post} />
+          <DisclaimerBox />
+          <PostNavigation task={task} related={related} />
           <EditableComments slug={post.slug} comments={comments} />
         </article>
-        <div className="border-t-4 border-[#c92f2f] pt-5">
-          <RelatedPanel task={task} post={post} related={related} />
-        </div>
+        <DetailSidebar basePath={basePath} recentPosts={related} />
       </div>
     </section>
+  )
+}
+
+function AuthorBox({ post }: { post: SitePost }) {
+  const author = getField(post, ['author', 'name', 'contactPerson', 'company'])
+  return (
+    <div className="mt-8 flex gap-5 border border-[#e6e6e6] bg-white p-5">
+      <div className="grid h-[100px] w-[100px] shrink-0 place-items-center bg-[#c4c4c4] text-white">
+        <UserRound className="h-16 w-16" />
+      </div>
+      <div className="min-w-0 py-1">
+        <p className="break-words text-xl text-[#1a73e8]">{author || 'Press Desk'}</p>
+      </div>
+    </div>
+  )
+}
+
+function DisclaimerBox() {
+  return (
+    <div className="mt-7 border border-[#f0c0c0] bg-[#f7dddd] p-5 text-base font-bold italic leading-7 text-[#b83838]">
+      Disclaimer: The views, suggestions, and opinions expressed here belong to the original contributors. This publication presents submitted information for general reading and public awareness.
+    </div>
+  )
+}
+
+function PostNavigation({ task, related }: { task: TaskKey; related: SitePost[] }) {
+  const previous = related[0]
+  const next = related[1]
+  if (!previous && !next) return null
+  return (
+    <nav className="mt-8 grid border-t border-[#e1e6ef] bg-white md:grid-cols-2">
+      <div className="border-b border-[#e1e6ef] p-6 md:border-b-0 md:border-r">
+        <p className="text-sm font-extrabold uppercase">Prev Post</p>
+        {previous ? <Link href={buildPostUrl(task, previous.slug)} className="mt-4 block leading-6 hover:text-[#2b82df]">{previous.title}</Link> : null}
+      </div>
+      <div className="p-6 text-left md:text-right">
+        <p className="text-sm font-extrabold uppercase">Next Post</p>
+        {next ? <Link href={buildPostUrl(task, next.slug)} className="mt-4 block leading-6 hover:text-[#2b82df]">{next.title}</Link> : null}
+      </div>
+    </nav>
+  )
+}
+
+function DetailSidebar({ basePath, recentPosts }: { basePath: string; recentPosts: SitePost[] }) {
+  return (
+    <aside className="space-y-8 lg:sticky lg:top-6 lg:self-start">
+      <div className="funds-card p-8">
+        <h2 className="text-base font-normal">Search</h2>
+        <form action="/search" className="mt-3 flex border border-[#e0e0e0] bg-white p-1">
+          <input name="q" type="search" className="min-w-0 flex-1 px-3 py-2 outline-none" />
+          <button className="bg-[#2b82df] px-4 text-sm font-bold text-white">Search</button>
+        </form>
+      </div>
+      <div className="funds-card p-8">
+        <h2 className="text-[34px] font-extrabold leading-tight text-[#3a3f45]">Recent Posts</h2>
+        <div className="mt-6 grid gap-2 text-[16px] leading-6 text-[#4d4d4d]">
+          {recentPosts.length ? recentPosts.slice(0, 7).map((item) => (
+            <Link key={item.id || item.slug} href={`${basePath}/${item.slug}`} className="hover:text-[#2b82df]">
+              {item.title}
+            </Link>
+          )) : <p>No recent posts yet.</p>}
+        </div>
+      </div>
+    </aside>
   )
 }
 

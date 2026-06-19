@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ArrowRight, UserPlus } from 'lucide-react'
 import { buildPageMetadata } from '@/lib/seo'
 import { EditableSiteShell } from '@/editable/shell/EditableSiteShell'
 import { EditableLocalSignupForm } from '@/editable/components/EditableLocalAuthForms'
@@ -12,18 +13,37 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function SignupPage() {
   return (
     <EditableSiteShell>
-      <main className="bg-[#f7f4ef] text-[#111]">
-        <section className="mx-auto grid min-h-[calc(100vh-12rem)] max-w-[var(--editable-container)] border-x border-black bg-white lg:grid-cols-[0.92fr_1.08fr]">
-          <div className="flex flex-col justify-center border-b border-black p-7 sm:p-12 lg:border-b-0 lg:border-r lg:p-16">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-[#c92f2f]">Create account</p>
-            <h1 className="editorial-serif mt-3 text-4xl font-black">{pagesContent.auth.signup.formTitle}</h1>
-            <EditableLocalSignupForm />
-            <p className="mt-5 border-t border-black pt-5 text-sm text-black/65">Already have an account? <Link href="/login" className="font-black text-[#c92f2f] underline-offset-4 hover:underline">{pagesContent.auth.signup.loginCta}</Link></p>
+      <main id="top" className="min-h-screen bg-[#f1f3f8] text-[#222a33]">
+        <section className="bg-[#303030] text-white">
+          <div className="funds-container flex min-h-[244px] flex-col items-center justify-center px-4 py-14 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#8fdddf]">{pagesContent.auth.signup.badge}</p>
+            <h1 className="mt-4 max-w-5xl text-4xl font-extrabold uppercase leading-tight tracking-[-0.02em] sm:text-5xl">
+              {pagesContent.auth.signup.title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-white/75">{pagesContent.auth.signup.description}</p>
           </div>
-          <div className="flex flex-col justify-center bg-[#171717] p-8 text-white sm:p-12 lg:p-16">
-            <p className="text-xs font-black uppercase tracking-[0.28em] text-[#f34a43]">{pagesContent.auth.signup.badge}</p>
-            <h2 className="editorial-brand mt-5 max-w-xl text-6xl font-black leading-[0.92] tracking-[-0.055em] sm:text-8xl">{pagesContent.auth.signup.title}</h2>
-            <p className="mt-6 max-w-lg text-sm font-semibold leading-8 text-white/68">{pagesContent.auth.signup.description}</p>
+        </section>
+
+        <section className="funds-container grid gap-8 py-10 lg:grid-cols-[420px_minmax(0,1fr)]">
+          <aside className="funds-card bg-white p-7 sm:p-8">
+            <span className="inline-block bg-[#2b82df] px-3 py-1 text-sm font-bold text-white">Join</span>
+            <h2 className="mt-5 text-3xl font-extrabold leading-tight text-[#343a42]">Create a clean publishing account in a few seconds.</h2>
+            <p className="mt-4 text-sm leading-7 text-[#555b63]">Use the same simple account flow while the page now matches the broader site design.</p>
+            <Link href="/search" className="mt-8 inline-flex items-center gap-2 bg-white px-5 py-3 text-sm font-bold text-[#2b82df] ring-1 ring-[#dfe4ec] transition hover:bg-[#2b82df] hover:text-white">
+              Browse first <ArrowRight className="h-4 w-4" />
+            </Link>
+          </aside>
+
+          <div className="funds-card flex flex-col justify-center p-7 sm:p-9">
+            <div className="grid h-16 w-16 place-items-center bg-[#eaf4ff] text-[#2b82df]">
+              <UserPlus className="h-7 w-7" />
+            </div>
+            <p className="mt-6 text-sm font-bold uppercase tracking-[0.14em] text-[#8b929d]">Create account</p>
+            <h2 className="mt-3 text-3xl font-extrabold leading-tight text-[#343a42] sm:text-4xl">{pagesContent.auth.signup.formTitle}</h2>
+            <EditableLocalSignupForm />
+            <p className="mt-6 border-t border-[#e6eaf2] pt-5 text-sm leading-6 text-[#555b63]">
+              Already have an account? <Link href="/login" className="font-bold text-[#2b82df] underline-offset-4 hover:underline">{pagesContent.auth.signup.loginCta}</Link>
+            </p>
           </div>
         </section>
       </main>
